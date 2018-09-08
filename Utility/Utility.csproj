@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <AssemblyName>Hdd.Utility</AssemblyName>
+    <RootNamespace>Hdd.Utility</RootNamespace>
+  </PropertyGroup>
+
+</Project>
