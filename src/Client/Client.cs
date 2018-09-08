@@ -1,38 +1,22 @@
 ﻿using System;
-using System.IO;
-using System.Net;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace Hdd.MTConnect.Client
 {
-    public class Client
+    public class Client : IClient
     {
-        private readonly string _uri;
-
-        public Client(string uri)
+        public async Task<XDocument> Read(string uri)
         {
-            _uri = uri ?? throw new ArgumentNullException(nameof(uri));
+            _ = uri ?? throw new ArgumentNullException(nameof(uri));
+            return await GetAsync(uri);
         }
 
-        public async Task<string> Read()
+        private static async Task<XDocument> GetAsync(string uri)
         {
-            return await GetAsync();
-        }
-
-        private async Task<string> GetAsync()
-        {
-            var request = (HttpWebRequest) WebRequest.Create(_uri);
-
-            using (var response = (HttpWebResponse) await request.GetResponseAsync())
-            {
-                using (var stream = response.GetResponseStream())
-                {
-                    using (var reader = new StreamReader(stream))
-                    {
-                        return await reader.ReadToEndAsync();
-                    }
-                }
-            }
+            XDocument doc = null;
+            await Task.Run(() => { doc = XDocument.Load(uri); });
+            return doc;
         }
     }
 }
