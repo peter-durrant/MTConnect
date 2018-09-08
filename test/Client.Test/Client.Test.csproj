@@ -48,8 +48,8 @@
       <Project>{01c60f9e-6372-457f-b58e-3312b4879005}</Project>
       <Name>Client</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Utility\Utility.csproj">
-      <Project>{0CA9E75D-DE00-40EE-AF90-47DAFF2FC2FE}</Project>
+    <ProjectReference Include="..\..\src\Utility\Utility.csproj">
+      <Project>{0ca9e75d-de00-40ee-af90-47daff2fc2fe}</Project>
       <Name>Utility</Name>
     </ProjectReference>
   </ItemGroup>
