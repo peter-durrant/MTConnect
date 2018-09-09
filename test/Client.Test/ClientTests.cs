@@ -68,6 +68,7 @@ namespace Hdd.MTConnect.Client.Test
         {
             var client = new Client(_schemaMap);
             var response = await client.Read(MtConnectDevicesUri);
+            Console.WriteLine(response);
             Assert.IsNotNull(response.Elements().First(element => element.Name.LocalName == ElementNames.MtConnectDevices));
         }
     }

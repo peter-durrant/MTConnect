@@ -8,15 +8,20 @@ namespace Hdd.MTConnect.Client.Schema
 {
     public static class SchemaHelpers
     {
+        public static XNamespace GetDefaultSchemaNamespace(this XDocument doc)
+        {
+            return doc.Root.Attribute("xmlns").Value;
+        }
+
         public static void LoadSchemaAndValidateDoc(this XDocument doc, ISchemaMap schemaMap, string schemaRootPath)
         {
-            var xmlNamespace = doc.Root.Attribute("xmlns").Value;
-            if (!schemaMap.Mapping.ContainsKey(xmlNamespace))
+            var xmlNamespace = doc.GetDefaultSchemaNamespace();
+            if (!schemaMap.Mapping.ContainsKey(xmlNamespace.NamespaceName))
             {
-                throw new InvalidOperationException("Namespace mapping not configured");
+                throw new InvalidOperationException($"Namespace mapping not configured: {xmlNamespace.NamespaceName}");
             }
 
-            var schemaPath = Path.Combine(schemaRootPath, schemaMap.Mapping[xmlNamespace]);
+            var schemaPath = Path.Combine(schemaRootPath, schemaMap.Mapping[xmlNamespace.NamespaceName]);
 
             var reader = new XmlTextReader(schemaPath);
             var schema = XmlSchema.Read(reader, ValidationCallback);
