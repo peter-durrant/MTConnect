@@ -1,20 +1,24 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 
 namespace Hdd.Utility
 {
     public static class AssemblyHelpers
     {
-        public static string AssemblyDirectory
+        public static string AssemblyDirectory(Assembly executingAssembly, params string[] paths)
         {
-            get
+            if (paths == null)
             {
-                var codeBase = Assembly.GetExecutingAssembly().CodeBase;
-                var uri = new UriBuilder(codeBase);
-                var path = Uri.UnescapeDataString(uri.Path);
-                return Path.GetDirectoryName(path);
+                throw new ArgumentNullException(nameof(paths));
             }
+
+            var codeBase = executingAssembly.CodeBase;
+            var uri = new UriBuilder(codeBase);
+            var path = Uri.UnescapeDataString(uri.Path);
+            var directoryName = Path.GetDirectoryName(path);
+            return Path.Combine(paths.Prepend(directoryName).ToArray());
         }
     }
 }

@@ -1,5 +1,5 @@
 {
   "schema": {
-    "urn:mtconnect.org:MTConnectDevices:1.3": "MTConnectDevices_1.4_1.0.xsd"
+    "urn:mtconnect.org:MTConnectDevices:1.3": "MTConnectDevices_1.4.xsd"
   }
 }

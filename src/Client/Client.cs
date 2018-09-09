@@ -1,9 +1,8 @@
 ﻿using System;
-using System.IO;
+using System.Reflection;
 using System.Threading.Tasks;
-using System.Xml;
 using System.Xml.Linq;
-using System.Xml.Schema;
+using Hdd.MTConnect.Client.Schema;
 using Hdd.Utility;
 
 namespace Hdd.MTConnect.Client
@@ -29,38 +28,11 @@ namespace Hdd.MTConnect.Client
             await Task.Run(() =>
             {
                 doc = XDocument.Load(uri);
-
-                var xmlNamespace = doc.Root.Attribute("xmlns").Value;
-                if (!_schemaMap.Mapping.ContainsKey(xmlNamespace))
-                {
-                    throw new InvalidOperationException("Namespace mapping not configured");
-                }
-
-                var schema = LoadSchema(_schemaMap.Mapping[xmlNamespace]);
-                doc.Validate(schema, ValidationCallback);
+                var schemaRootPath = AssemblyHelpers.AssemblyDirectory(Assembly.GetExecutingAssembly(), "Schema");
+                doc.LoadSchemaAndValidateDoc(_schemaMap, schemaRootPath);
             });
 
             return doc;
-        }
-
-        private static XmlSchemaSet LoadSchema(string schemaFileName)
-        {
-            var schemaPath = Path.Combine(AssemblyHelpers.AssemblyDirectory, "Schema", schemaFileName);
-            var reader = new XmlTextReader(schemaPath);
-            var schema = XmlSchema.Read(reader, ValidationCallback);
-
-            var schemaSet = new XmlSchemaSet();
-            schemaSet.Add(schema);
-            return schemaSet;
-        }
-
-        private static void ValidationCallback(object sender, ValidationEventArgs args)
-        {
-            // could tolerate warning - stay strict for now
-            if (args.Severity == XmlSeverityType.Warning || args.Severity == XmlSeverityType.Error)
-            {
-                throw new XmlSchemaValidationException(args.Message, args.Exception);
-            }
         }
     }
 }
