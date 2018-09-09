@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Xml;
 using System.Xml.Linq;
-using Hdd.MTConnect.Client.Schema;
+using System.Xml.Serialization;
 
 namespace Hdd.MTConnect.Client
 {
@@ -13,19 +12,20 @@ namespace Hdd.MTConnect.Client
         public MTConnectDevices(XDocument doc)
         {
             _doc = doc ?? throw new ArgumentNullException(nameof(doc));
-            Header = new Header(_doc);
-            ReadDevices();
+            ReadData();
         }
 
-        public Header Header { get; }
-        public IEnumerable<Device> Devices { get; private set; }
+        public MTConnectDevicesType Data { get; private set; }
 
-        private void ReadDevices()
+        private void ReadData()
         {
-            var xmlns = _doc.GetDefaultSchemaNamespace();
-
-            var xmlDevices = _doc.Element(xmlns + "MTConnectDevices").Element(xmlns + "Devices").Elements(xmlns + "Device");
-            Devices = xmlDevices.Select(xElement => new Device()).ToList();
+            using (var reader = XmlReader.Create(_doc.Root.CreateReader(), new XmlReaderSettings()))
+            {
+                reader.MoveToContent();
+                var serializer = new XmlSerializer(typeof(MTConnectDevicesType));
+                Data = (MTConnectDevicesType) serializer.Deserialize(reader);
+                reader.Close();
+            }
         }
     }
 }
